@@ -12,7 +12,7 @@ use DateTime::Format::Strptime;
 
 sub get_options {
     my $known_pairs = 0; # false
-    my $cache_known_pairs = 0; # false
+    my $do_not_cache_known_pairs = 0; # false
     my $max_x_gap_for_interpolation = 0; # false
     my %io_control = ( 'x-column' => 'time',
 		       'y-column' => 'depth',
@@ -20,7 +20,7 @@ sub get_options {
 		       'y-time-format' => '' );
     my $help = 0; # false
     GetOptions( 'known-pairs|k=s' => \$known_pairs,
-		'cache-known-pairs|c' => \$cache_known_pairs,
+		'do-not-cache-known-pairs|c' => \$do_not_cache_known_pairs,
 		'max-x-gap-for-interpolation|g=f' => \$max_x_gap_for_interpolation,
 		'io-control|i=s' => \%io_control,
 		'help|h' => \$help
@@ -46,7 +46,7 @@ sub get_options {
 
     return ( 'known-pairs' => $known_pairs,
 	     'max-x-gap-for-interpolation' => $max_x_gap_for_interpolation,
-	     'cache-known-pairs' => $cache_known_pairs,
+	     'do-not-cache-known-pairs' => $do_not_cache_known_pairs,
 	     'io-control' => \%io_control );
 }
 
@@ -212,8 +212,8 @@ sub process_data {
 
 sub main {
     my %options = &get_options();
-    $options{'known-pairs'} = &read_known_pairs( %options );
 
+    $options{'known-pairs'} = &read_known_pairs( %options );
     foreach my $i ( @{$options{'known-pairs'}} ) {
 	print STDERR "Known pairs (x, y, delta x, delta y): \n";
 	foreach my $p ( @$i ) {
@@ -255,11 +255,11 @@ The I<x>-I<y> conversion is done based on a table given in a file (See Options B
 
 CSV file containing a series of correlating pairs of I<x> to I<y>. This option is required. The CSV is with the header at the first row and I<x> and I<y> values are stored in columns specified by the header (See Option B<--io-control> to specify the column). The rows have to be ascending-sorted by I<x>. 
 
-=item B<--cache-known-pairs>
+=item B<--do-not-cache-known-pairs>
 
 =item B<-c>
 
-The I<x>-I<y> pairs would be read once and kept in the memory. By default, the pairs would be read as many as records of data. This program does not keep it in the memory.
+Not supported yet. By default, the I<x>-I<y> pairs are read once and kept in the memory. By this option, the pairs would be read as many as the data records, without keeping them in the memory.
 
 =item B<--max-x-gap-for-interpolation> I<gap>
 
@@ -277,15 +277,19 @@ Set values for the following keys.
 
 =item B<x-column>
 
+Name of the column containing I<x> values in the data and the file of the known pairs. Default is C<time>.
+
 =item B<y-column>
 
-Name of the column containing I<x> and I<y> values in the data. Defaults are C<time> and C<depth>, respectively.
+Column name for I<y> values similar to B<x-column>. Default is C<depth>.
 
 =item B<x-time-format>
 
+Time format in which I<x> values are given specified by [http://search.cpan.org/~drolsky/DateTime-Format-Strptime-1.52/lib/DateTime/Format/Strptime.pm#STRPTIME_PATTERN_TOKENS], not L<strptime(3)> [http://www.unix.com/man-page/FreeBSD/3/strftime/]. Give C<> for numerical values. Default is C<%FT%T,%N%z>.
+
 =item B<y-time-format>
 
-Time format in which I<x> and I<y> values are given specified by [http://search.cpan.org/~drolsky/DateTime-Format-Strptime-1.52/lib/DateTime/Format/Strptime.pm#STRPTIME_PATTERN_TOKENS], not L<strptime(3)> [http://www.unix.com/man-page/FreeBSD/3/strftime/]. Give C<> to treat number. Default for I<x> is C<%FT%T,%N%z> and that for I<y> is C<>.
+Not supported yet. Time format for I<y> values similar to B<x-time-format>. Default is C<>.
 
 =back
 

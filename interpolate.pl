@@ -65,6 +65,17 @@ sub parse_time {
 }
 
 
+sub significant_digits_n_sprintf_format {
+    my ( $num_str ) = @_;
+
+    $num_str =~ /^[\+\-]?(?:0(?:\.0*)?|\.0+)$/ and return [ 0, '0' ];
+    $num_str =~ /^[\+\-]?([\d^0]\d*)\.?(\d*)$/
+	and return [ length( $1 ) + length ( $2 ), '%.' . length( $2 ) . 'f' ];
+    $num_str =~ /^[\+\-]?([\d^0])(\d*)\.?(\d*)[eE][\+\-]?[\d^0]\d*$/
+	and return [ length( $1 ) + length ( $2 ) + length( $3 ), '%.' . ( length( $2 ) + length( $3 ) ) . 'e' ];
+}
+
+
 sub read_known_pairs {
     my %options = @_;
 
@@ -119,9 +130,10 @@ sub read_known_pairs {
 
 	# cont.
 
-	my $delta_y;
+	my ( $delta_y, $y_speintf_format );
 	if ( ${$options{'io-control'}}{'y-time-format'} eq '' ) {
 	    $delta_y = $y - $y_prev;
+	    $y_speintf_format = ${ ( sort { ${$a}[0] <=> ${$b}[0] } ( &significant_digits_n_sprintf_format( $y_prev), &significant_digits_n_sprintf_format( $y ) ) )[-1]}[1]
 	} else {
 	    my $delta = $y_prev->subtract_datetime_absolute( $y );
 	    $delta_y = $delta->seconds + $delta->nanoseconds / 1000000000;
@@ -130,7 +142,7 @@ sub read_known_pairs {
 	# todo: delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp).
 	# combine delta_x and delta_y when deleting.
 
-	push( @{$known_pairs_for_intervals[-1]}, [ $x, $y, $delta_x, $delta_y ] );
+	push( @{$known_pairs_for_intervals[-1]}, [ $x, $y, $delta_x, $delta_y, $y_speintf_format ] );
     }
 
     close $known_pairs_file or die "Could not close \"$known_pairs_file\" for \"$options{'known-pairs'}\"";
@@ -162,10 +174,14 @@ sub convert_x2y {
 	$delta_x = $delta_x_dt->seconds + $delta_x_dt->nanoseconds / 1000000000;
     }
 
+    my $delta_y = $delta_x * ${$min_more}[3] / ${$min_more}[2];
     if ( ${$options{'io-control'}}{'y-time-format'} eq '' ) {
-	return ${$max_less}[1] + $delta_x * ( ${$min_more}[1] - ${$max_less}[1] ) / ${$min_more}[2];
+	return sprintf( ${$min_more}[4], ${$max_less}[1] + $delta_y );
     } else {
-	die 'Not implemented yet. Time values for y are not supported'; #todo
+	# not tested yet
+	my $y = ${$max_less}[1]->clone;
+	$y->add( seconds => int( $delta_y) , nanoseconds => ( $delta_y - int( $delta_y ) ) * 1000000000 );
+	return ${$options{'io-control'}}{'y-time-format'}->format_datetime( $y )
     }
 }
 

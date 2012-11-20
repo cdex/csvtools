@@ -1,14 +1,18 @@
-Interpolation
-=============
+csvtools
+========
 
-A command line tool to interpolate numerical values for known pairs of values.
+Command line tools to manipulate CSV files.
 
-See `perl interpolate.pl --help` for details.
+See `perl interpolate.pl --help` and similar for details.
 
-It requires perl modules `Text::CSV_XS` and `DateTime::Format::Strptime`.
+They requires perl modules `Text::CSV_XS` and `DateTime::Format::Strptime`.
 
-Reason for this tool
---------------------
+interpolate.pl
+--------------
+
+Interpolates numerical values for known pairs of values.
+
+### Reason for this tool
 
 Linear interpolation method gives unknown _y_ values for given _x_ values
 from known adjacent pairs of _x_ and _y_.
@@ -21,3 +25,18 @@ The tool takes a maximum _x_ length to allow linear interpolation.
 
 This tool supports not only numerical values but also
 date and time values for _x_ (date-time for _y_ is not supported so far).
+
+selectcols.pl
+-------------
+
+Selects columns from a CSV file.
+
+formatdatetime.pl
+-----------------
+
+Re-formats date-time values in a CSV file.
+
+catcsv.pl
+---------
+
+Concatenates some CSV files to another single CSV file.

@@ -40,3 +40,8 @@ catfiles.pl
 -----------
 
 Concatenates some text files.
+
+### Reason for this tool
+
+It does not accept files with different headers at the first lines,
+and prints the header only once at first.

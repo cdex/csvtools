@@ -36,7 +36,7 @@ formatdatetime.pl
 
 Re-formats date-time values in a CSV file.
 
-catcsv.pl
----------
+catfiles.pl
+-----------
 
-Concatenates some CSV files to another single CSV file.
+Concatenates some text files to another single file.

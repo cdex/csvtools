@@ -5,8 +5,6 @@ use warnings;
 
 use Getopt::Long 'GetOptions';
 use Pod::Usage 'pod2usage';
-use Text::CSV_XS;
-use List::Util qw(first);
 
 
 sub get_options {

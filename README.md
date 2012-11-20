@@ -39,4 +39,4 @@ Re-formats date-time values in a CSV file.
 catfiles.pl
 -----------
 
-Concatenates some text files to another single file.
+Concatenates some text files.

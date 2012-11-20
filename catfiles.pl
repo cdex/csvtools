@@ -24,9 +24,7 @@ sub process_data {
 
 	my $h = <IN>;
 	if ( defined( $header ) ) {
-	    chomp( $h );
-	    chomp( $header );
-	    $header eq $h or die "Header $h in $f differs from $header";
+	    $header eq $h or die "Header \"$h\" in $f differs from \"$header\"";
 	} else {
 	    $header = $h;
 	    print STDOUT $header;

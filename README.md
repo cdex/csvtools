@@ -5,7 +5,7 @@ Command line tools to manipulate CSV files.
 
 See `perl interpolate.pl --help` and similar for details.
 
-They requires perl modules `Text::CSV_XS` and `DateTime::Format::Strptime`.
+They require perl modules `Text::CSV_XS` and `DateTime::Format::Strptime`.
 
 interpolate.pl
 --------------

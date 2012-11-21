@@ -6,6 +6,7 @@ use warnings;
 use Getopt::Long 'GetOptions';
 use Pod::Usage 'pod2usage';
 use Text::CSV_XS;
+use List::Util qw(first);
 use DateTime::Format::Strptime;
 
 
@@ -28,8 +29,6 @@ sub get_options {
     pod2usage( -message => "No differences between --source-time-format and --destination-time-format." )
 	if $format_src eq $format_dst;
 
-    die 'Not implemented yet.'; ##
-
     return ( DateTime::Format::Strptime->new( pattern => $format_src ),
 	     DateTime::Format::Strptime->new( pattern => $format_dst ),
 	     @columns );
@@ -47,6 +46,7 @@ sub reformat_time {
 	warn "Could not parse \"$src\" as time $format_src: $@";
 	return $src; # undef
     }
+    defined( $int ) or return $src;
     return $format_dst->format_datetime( $int );
 }
 

@@ -111,7 +111,7 @@ sub read_known_pairs {
 	    next;
 	}
 
-	my ( $x_prev, $y_prev ) = @{${$known_pairs_for_intervals[-1]}[-1]};
+	my ( $x_prev, $y_prev, $delta_x_prev, $delta_y_prev ) = @{${$known_pairs_for_intervals[-1]}[-1]};
 	( $x_prev < $x ) or die "x values are not sorted by ascending order in known pairs: \"$x_prev\" followed by \"$x\"";
 
 	my $delta_x;
@@ -139,8 +139,19 @@ sub read_known_pairs {
 	    $delta_y = $delta->seconds + $delta->nanoseconds / 1000000000;
 	}
 
-	# todo: delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp).
-	# combine delta_x and delta_y when deleting.
+	# delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp)
+	if ( $#{$known_pairs_for_intervals[-1]} > 1
+	     && $y_prev
+	     eq &convert_x2y( $x_prev,
+			      ( 'known-pairs' => [ [ ${$known_pairs_for_intervals[-1]}[-2],
+						     [ $x, $y,
+						       $delta_x_prev + $delta_x, $delta_y_prev + $delta_y,
+						       $y_speintf_format ] ] ],
+				'io-control' => $options{'io-control'} ) ) ) {
+	    delete( ${$known_pairs_for_intervals[-1]}[-1] );
+	    $delta_x = $delta_x_prev + $delta_x;
+	    $delta_y = $delta_y_prev + $delta_y;
+	}
 
 	push( @{$known_pairs_for_intervals[-1]}, [ $x, $y, $delta_x, $delta_y, $y_speintf_format ] );
     }

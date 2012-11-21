@@ -64,9 +64,10 @@ sub process_data {
 		defined( $i ) and push( @indices, $i );
 	    }
 	    @indices or die 'No columns selected';
-	}
-	foreach my $i ( @indices ) {
-	    ${$row}[$i] = &reformat_time( $format_src, $format_dst, ${$row}[$i] )
+	} else {
+	    foreach my $i ( @indices ) {
+		${$row}[$i] = &reformat_time( $format_src, $format_dst, ${$row}[$i] )
+	    }
 	}
 	$data_csv->print( \*STDOUT, $row );
 	print STDOUT "\n";

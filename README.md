@@ -23,18 +23,10 @@ at the _x_ intervals where known pairs of _x_ and _y_
 at the ends of the intervals are not so close.
 The tool takes a maximum _x_ length to allow linear interpolation.
 
-This tool supports not only numerical values but also
-date and time values for _x_ (date-time for _y_ is not supported so far).
-
 selectcols.pl
 -------------
 
 Selects columns from a CSV file.
-
-formatdatetime.pl
------------------
-
-Re-formats date-time values in a CSV file.
 
 catfiles.pl
 -----------
@@ -45,3 +37,8 @@ Concatenates some text files.
 
 It does not accept files with different headers at the first lines,
 and prints the header only once at first.
+
+datetime2seconds.pl
+-------------------
+
+Converts date-time values in a CSV file to seconds from a time.

@@ -38,7 +38,7 @@ Concatenates some text files.
 It does not accept files with different headers at the first lines,
 and prints the header only once at first.
 
-datetime2seconds.pl
--------------------
+time2number.pl
+--------------
 
 Converts date-time values in a CSV file to seconds from a time.

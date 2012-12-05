@@ -96,9 +96,9 @@ __END__
 
 =head1 SYNOPSIS
 
-B<datetime2seconds.pl> B<-f> F<format> B<-e> F<epoch> B<-c> F<column> [B<-c> F<column> ...]
+B<time2number.pl> B<-f> F<format> B<-e> F<epoch> B<-c> F<column> [B<-c> F<column> ...]
 
-B<datetime2seconds.pl> B<-h>
+B<time2number.pl> B<-h>
 
 =head1 DESCRIPTION
 

@@ -40,10 +40,14 @@ sub get_options {
 sub significant_digits_n_sprintf_format {
     my ( $num_str ) = @_;
 
-    $num_str =~ /^[\+\-]?(?:0(?:\.0*)?|\.0+)$/ and return [ 0, '0' ];
-    $num_str =~ /^[\+\-]?([\d^0]\d*)\.?(\d*)$/
+    $num_str =~ /^[\+\-]?0+$/ and return [ 0, '%.0f' ];
+    $num_str =~ /^[\+\-]?0+\.(0+)$/ and return [ 0, '%.' . length( $1 ) . 'f' ];
+    $num_str =~ /^[\+\-]?([1-9]\d*)\.?(\d*)$/
 	and return [ length( $1 ) + length ( $2 ), '%.' . length( $2 ) . 'f' ];
-    $num_str =~ /^[\+\-]?([\d^0])(\d*)\.?(\d*)[eE][\+\-]?[\d^0]\d*$/
+
+    $num_str =~ /^[\+\-]?0+[eE][\+\-]?[1-9]\d*$/ and return [ 0, '%.0e' ];
+    $num_str =~ /^[\+\-]?0+\.(0+)[eE][\+\-]?[1-9]\d*$/ and return [ 0, '%.' . length( $1 ) . 'e' ];    
+    $num_str =~ /^[\+\-]?([1-9])(\d*)\.?(\d*)[eE][\+\-]?[1-9]\d*$/
 	and return [ length( $1 ) + length ( $2 ) + length( $3 ), '%.' . ( length( $2 ) + length( $3 ) ) . 'e' ];
 }
 
@@ -93,7 +97,7 @@ sub read_known_pairs {
 	# cont.
 
 	my $delta_y = $y - $y_prev;
-	my $y_speintf_format = ${ ( sort { ${$a}[0] <=> ${$b}[0] } ( &significant_digits_n_sprintf_format( $y_prev), &significant_digits_n_sprintf_format( $y ) ) )[-1]}[1];
+	my @y_significant_digits_n_sprintf_format = @{ ( sort { ${$a}[0] <=> ${$b}[0] } ( &significant_digits_n_sprintf_format( $y_prev), &significant_digits_n_sprintf_format( $y ) ) )[-1]};
 
 	# delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp)
 	if ( $#{$known_pairs_for_intervals[-1]} > 0
@@ -102,13 +106,14 @@ sub read_known_pairs {
 			      ( 'known-pairs' => [ [ ${$known_pairs_for_intervals[-1]}[-2],
 						     [ $x, $y,
 						       $delta_x_prev + $delta_x, $delta_y_prev + $delta_y,
-						       $y_speintf_format ] ] ] ) ) ) {
+						       $y_significant_digits_n_sprintf_format[1] ] ] ] ) ) ) {
+	    @y_significant_digits_n_sprintf_format = @{ ( sort { ${$a}[0] <=> ${$b}[0] } ( \@y_significant_digits_n_sprintf_format, &significant_digits_n_sprintf_format( ${${$known_pairs_for_intervals[-1]}[-2]}[1] ) ) )[-1]};
 	    delete( ${$known_pairs_for_intervals[-1]}[-1] );
 	    $delta_x = $delta_x_prev + $delta_x;
 	    $delta_y = $delta_y_prev + $delta_y;
 	}
 
-	push( @{$known_pairs_for_intervals[-1]}, [ $x, $y, $delta_x, $delta_y, $y_speintf_format ] );
+	push( @{$known_pairs_for_intervals[-1]}, [ $x, $y, $delta_x, $delta_y, $y_significant_digits_n_sprintf_format[1] ] );
     }
 
     close $known_pairs_file or die "Could not close \"$known_pairs_file\" for \"$options{'known-pairs'}\"";

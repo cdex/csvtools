@@ -96,7 +96,7 @@ sub read_known_pairs {
 	my $y_speintf_format = ${ ( sort { ${$a}[0] <=> ${$b}[0] } ( &significant_digits_n_sprintf_format( $y_prev), &significant_digits_n_sprintf_format( $y ) ) )[-1]}[1];
 
 	# delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp)
-	if ( $#{$known_pairs_for_intervals[-1]} > 1
+	if ( $#{$known_pairs_for_intervals[-1]} > 0
 	     && $y_prev
 	     eq &convert_x2y( $x_prev,
 			      ( 'known-pairs' => [ [ ${$known_pairs_for_intervals[-1]}[-2],

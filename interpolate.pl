@@ -101,13 +101,13 @@ sub read_known_pairs {
 
 	# delete the previous pair (p) if the pair (p) can be interpolated by this pair (t) and the pair before p (pp)
 	if ( $#{$known_pairs_for_intervals[-1]} > 0
+	     && $delta_y / $delta_x == $delta_y_prev / $delta_x_prev
 	     && $y_prev
 	     eq &convert_x2y( $x_prev,
 			      ( 'known-pairs' => [ [ ${$known_pairs_for_intervals[-1]}[-2],
 						     [ $x, $y,
 						       $delta_x_prev + $delta_x, $delta_y_prev + $delta_y,
-						       $y_digits_sprintf[1] ] ] ] ) )
-	     && $delta_y / $delta_x == $delta_y_prev / $delta_x_prev ) {
+						       $y_digits_sprintf[1] ] ] ] ) ) ) {
 	    @y_digits_sprintf = @{ ( sort { ${$a}[0] <=> ${$b}[0] } ( \@y_digits_sprintf, &significant_digits_n_sprintf_format( ${${$known_pairs_for_intervals[-1]}[-2]}[1] ) ) )[-1]};
 	    delete( ${$known_pairs_for_intervals[-1]}[-1] );
 	    $delta_x = $delta_x_prev + $delta_x;
